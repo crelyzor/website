@@ -50,7 +50,7 @@ const WaitingListForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className=" mx-auto">
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <input
