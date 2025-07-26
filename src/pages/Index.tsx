@@ -18,31 +18,105 @@ import {
   Mail,
   Bell,
   Globe,
+  AlertCircle,
 } from "lucide-react";
 
-// Mock WaitingListForm component
 const WaitingListForm = () => {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [touched, setTouched] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Mock Formspree URL for demo
+  const FORMSPREE_URL = import.meta.env.VITE_FORMSPREE_URL;
+  const FORMSPREE_URL1 = import.meta.env.VITE_FORMSPREE_URL1;
+  const validateEmail = (email: string) => {
+    if (!email) return "Email is required";
+    if (email.length < 3) return "Email is too short";
+    if (!email.includes("@")) return "Please include '@' in your email";
+    if (!email.includes(".")) return "Please include a valid domain";
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) return "Please enter a valid email address";
+    return "";
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    // Don't validate while typing - only clear existing errors
+  };
+
+  const handleEmailFocus = () => {
+    setEmailError(""); // Clear error when user focuses back
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent default form submission and validation
+
+    const error = validateEmail(email);
+
+    if (error) {
+      setEmailError(error);
+      setTouched(true);
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitted(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+
+      // First submission
+      const res1 = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
+      });
+
+      // Second submission
+      const res2 = await fetch(FORMSPREE_URL1, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
+      });
+
+      // Check if both succeeded
+      if (res1.ok && res2.ok) {
+        setIsSubmitted(true);
+        setEmail("");
+        setTouched(false);
+        setEmailError("");
+      } else {
+        const data1 = await res1.json();
+        const data2 = await res2.json();
+        const msg =
+          data1?.errors?.[0]?.message ||
+          data2?.errors?.[0]?.message ||
+          "Something went wrong. Please try again.";
+        setEmailError(msg);
+      }
+    } catch (error) {
+      setEmailError("Something went wrong. Please try again later.");
+    }
+
     setIsLoading(false);
   };
 
   if (isSubmitted) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center animate-pulse">
-        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-green-800 mb-2">
-          You're In!
-        </h3>
-        <p className="text-green-600">
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/60 rounded-2xl p-8 text-center shadow-lg backdrop-blur-sm">
+        <div className="relative">
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4 animate-bounce" />
+          <div className="absolute inset-0 w-16 h-16 mx-auto bg-green-500/20 rounded-full animate-ping"></div>
+        </div>
+        <h3 className="text-xl font-bold text-green-800 mb-2">You're In!</h3>
+        <p className="text-green-700/80 font-medium">
           We'll notify you when Crelyzor launches.
         </p>
       </div>
@@ -50,29 +124,80 @@ const WaitingListForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className=" mx-auto">
+    <form onSubmit={handleSubmit} className="mx-auto" noValidate>
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-            className="w-full px-4 py-3 rounded-xl border border-purple-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all duration-300 text-gray-800 placeholder-gray-500"
-          />
+        <div className="flex-1 relative">
+          <div className="relative group">
+            <Mail
+              className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 transition-colors duration-200 z-10 ${
+                emailError
+                  ? "text-red-400"
+                  : "text-gray-400 group-focus-within:text-purple-500"
+              }`}
+            />
+
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleEmailChange}
+              onFocus={handleEmailFocus}
+              placeholder="Enter your email"
+              className={`w-full pl-11 pr-12 py-4 rounded-xl border-2 transition-all duration-300 text-gray-800 placeholder-gray-500 bg-white/90 backdrop-blur-sm relative z-10 ${
+                emailError
+                  ? "border-red-300 focus:border-red-400 focus:ring-4 focus:ring-red-100/60 shadow-red-100/50"
+                  : "border-gray-200 focus:border-purple-400 focus:ring-4 focus:ring-purple-100/60 hover:border-purple-300"
+              } shadow-sm hover:shadow-md focus:shadow-lg focus:outline-none`}
+            />
+
+            {emailError && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20">
+                <AlertCircle className="w-5 h-5 text-red-400 animate-pulse" />
+              </div>
+            )}
+          </div>
+
+          {/* Custom Error Display - Absolute positioned to not affect layout */}
+          <div
+            className={`absolute top-full left-0 right-0 z-30 transition-all duration-500 ease-out ${
+              emailError
+                ? "opacity-100 translate-y-2"
+                : "opacity-0 translate-y-0 pointer-events-none"
+            }`}
+          >
+            <div className="relative mt-1">
+              <div className="absolute -top-2 left-6 w-4 h-4 bg-red-50 border-l border-t border-red-200/60 transform rotate-45"></div>
+              <div className="bg-gradient-to-r from-red-50 via-red-50 to-rose-50 border border-red-200/60 rounded-xl px-4 py-3 shadow-lg backdrop-blur-sm">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-700 text-sm font-medium leading-relaxed">
+                      {emailError}
+                    </p>
+                    <p className="text-red-600/70 text-xs mt-1">
+                      Please check your email format
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-3 bg-gradient-to-r from-black to-gray-600 text-white font-semibold rounded-xl hover:from-gray-700 hover:to-black transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px]"
+          className="px-8 py-4 bg-gradient-to-r from-black to-gray-700 text-white font-semibold rounded-xl hover:from-gray-800 hover:to-black transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center min-w-[140px] backdrop-blur-sm"
         >
           {isLoading ? (
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <span className="text-sm">Joining...</span>
+            </div>
           ) : (
             <>
               Join Waitlist
-              <ArrowRight className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
             </>
           )}
         </button>
@@ -252,20 +377,20 @@ const EnhancedCreatorLanding = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-3">
+              <div className="my-4"></div>
+              <div className="flex flex-wrap gap-2 sm:gap-3 animate-bounce">
                 {platforms.map((platform, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-3 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                    className="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div
-                      className={`w-8 h-8 bg-gradient-to-r ${platform.color} rounded-lg flex items-center justify-center`}
+                      className={`w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r ${platform.color} rounded-lg flex items-center justify-center`}
                     >
-                      <platform.icon className="w-4 h-4 text-white" />
+                      <platform.icon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 text-sm sm:text-base">
                       {platform.name}
                     </span>
                   </div>
