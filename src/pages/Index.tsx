@@ -26,12 +26,31 @@ const WaitingListForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const FORMSPREE_URL = process.env.REACT_APP_FORMSPREE_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitted(true);
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: new FormData(e.target),
+      });
+
+      if (res.ok) {
+        setIsSubmitted(true);
+        setEmail("");
+      } else {
+        alert("Failed to join the waitlist. Please try again.");
+      }
+    } catch (error) {
+      alert("Something went wrong. Please try again later.");
+    }
+
     setIsLoading(false);
   };
 
