@@ -377,20 +377,20 @@ const EnhancedCreatorLanding = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-3 animate-bounce">
+              <div className="my-4"></div>
+              <div className="flex flex-wrap gap-2 sm:gap-3 animate-bounce">
                 {platforms.map((platform, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-3 px-4 py-3 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                    className="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 sm:py-3 bg-white/80 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-gray-200 shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div
-                      className={`w-8 h-8 bg-gradient-to-r ${platform.color} rounded-lg flex items-center justify-center `}
+                      className={`w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r ${platform.color} rounded-lg flex items-center justify-center`}
                     >
-                      <platform.icon className="w-4 h-4 text-white" />
+                      <platform.icon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 text-sm sm:text-base">
                       {platform.name}
                     </span>
                   </div>
