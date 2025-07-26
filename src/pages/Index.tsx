@@ -26,7 +26,11 @@ const WaitingListForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const FORMSPREE_URL = process.env.REACT_APP_FORMSPREE_URL;
+  const FORMSPREE_URL = import.meta.env.VITE_FORMSPREE_URL;
+
+  if (!FORMSPREE_URL) {
+    throw new Error("REACT_APP_FORMSPREE_URL environment variable is not set.");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +40,7 @@ const WaitingListForm = () => {
       const res = await fetch(FORMSPREE_URL, {
         method: "POST",
         headers: {
-          Accept: "application/json",
+          Accept: "application/json", // ✅ This is fine
         },
         body: new FormData(e.target),
       });
@@ -74,6 +78,7 @@ const WaitingListForm = () => {
         <div className="flex-1">
           <input
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
