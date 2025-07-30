@@ -378,7 +378,7 @@ const EnhancedCreatorLanding = () => {
                 </div>
               </div>
               <div className="my-4"></div>
-              <div className="flex flex-wrap gap-2 sm:gap-3 animate-bounce">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {platforms.map((platform, index) => (
                   <div
                     key={index}
@@ -410,7 +410,7 @@ const EnhancedCreatorLanding = () => {
                     <p className="text-gray-600">Coming Soon...</p>
                   </div>
                 </div>
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
                   <Sparkles className="w-8 h-8 text-yellow-800" />
                 </div>
               </div>
