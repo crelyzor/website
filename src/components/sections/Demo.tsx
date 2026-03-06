@@ -102,12 +102,12 @@ export function Demo() {
   const [flipped, setFlipped] = useState(false);
 
   return (
-    <section id="demo" className="bg-[#0a0a0a] pt-28 pb-16 px-8">
+    <section id="demo" className="bg-[#0a0a0a] pt-16 pb-12 px-4 sm:pt-28 sm:pb-16 sm:px-8">
       <div className="max-w-6xl mx-auto">
 
         {/* — Card — */}
         <div className="mb-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
             {/* Text */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}

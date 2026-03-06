@@ -6,7 +6,7 @@ const GOLD = "#d4af61";
 
 export function Network() {
   return (
-    <section className="py-28 px-8 border-t border-neutral-900" style={{ backgroundColor: "#080808" }}>
+    <section className="py-16 px-4 sm:py-28 sm:px-8 border-t border-neutral-900" style={{ backgroundColor: "#080808" }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
@@ -14,7 +14,7 @@ export function Network() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="mb-14"
+          className="mb-8 sm:mb-14"
         >
           <p className="text-[10px] tracking-[0.15em] text-neutral-600 uppercase font-medium mb-3">The OS Difference</p>
           <h2
@@ -33,10 +33,10 @@ export function Network() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="rounded-2xl border border-neutral-800 overflow-hidden mb-10"
+          className="rounded-2xl border border-neutral-800 overflow-hidden mb-6 sm:mb-10"
         >
-          <div className="grid grid-cols-2 divide-x divide-neutral-800">
-            <div className="p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 sm:divide-x divide-neutral-800">
+            <div className="p-5 sm:p-8 border-b border-neutral-800 sm:border-b-0">
               <p className="text-[10px] tracking-[0.12em] text-neutral-700 uppercase font-medium mb-6">Before</p>
               <div className="space-y-4">
                 {[
@@ -55,7 +55,7 @@ export function Network() {
                 4 apps · 4 logins · context lost on every switch
               </div>
             </div>
-            <div className="p-8" style={{ backgroundColor: "#0a0a0a" }}>
+            <div className="p-5 sm:p-8" style={{ backgroundColor: "#0a0a0a" }}>
               <p className="text-[10px] tracking-[0.12em] uppercase font-medium mb-6" style={{ color: GOLD + "80" }}>After</p>
               <div className="space-y-4">
                 {[

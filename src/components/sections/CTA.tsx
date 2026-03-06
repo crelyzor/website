@@ -16,7 +16,7 @@ export function CTA() {
   };
 
   return (
-    <section id="waitlist" className="pt-16 pb-28 px-8 border-t border-neutral-900 bg-[#0a0a0a] relative overflow-hidden">
+    <section id="waitlist" className="pt-12 pb-20 px-4 sm:pt-16 sm:pb-28 sm:px-8 border-t border-neutral-900 bg-[#0a0a0a] relative overflow-hidden">
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] pointer-events-none"
         style={{ background: `radial-gradient(ellipse at bottom, ${GOLD}0a 0%, transparent 70%)` }}

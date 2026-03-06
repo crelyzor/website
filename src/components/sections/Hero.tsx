@@ -360,7 +360,7 @@ export function Hero() {
   return (
     <section className="bg-[#0a0a0a]">
       {/* Hero text */}
-      <div className="relative pt-32 pb-20 px-8 overflow-hidden">
+      <div className="relative pt-24 pb-14 px-4 sm:pt-32 sm:pb-20 sm:px-8 overflow-hidden">
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none"
           style={{ background: "radial-gradient(ellipse at top, #d4af6108 0%, transparent 70%)" }}
@@ -417,10 +417,125 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll walkthrough */}
-      <div ref={scrollRef} id="product" className="relative" style={{ height: "300vh" }}>
-        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-          <div className="max-w-6xl mx-auto w-full px-8">
+      {/* Product walkthrough */}
+      <div id="product">
+
+        {/* Mobile: tap-to-switch walkthrough */}
+        <div className="md:hidden px-4 pt-2 pb-16">
+          {/* Step tabs */}
+          <div className="flex gap-2 mb-5">
+            {STEPS.map((step, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveStep(i)}
+                className="flex-1 py-2 rounded-lg border text-[10px] font-medium tracking-wide transition-all"
+                style={{
+                  borderColor: activeStep === i ? `${GOLD}60` : "#2a2a2a",
+                  backgroundColor: activeStep === i ? `${GOLD}12` : "transparent",
+                  color: activeStep === i ? GOLD : "#555",
+                }}
+              >
+                {["Command", "Meetings", "Identity"][i]}
+              </button>
+            ))}
+          </div>
+
+          {/* Step description */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`mob-step-${activeStep}`}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="mb-5"
+            >
+              <div className="w-1.5 h-1.5 rounded-full mb-2" style={{ backgroundColor: GOLD }} />
+              <h3 className="text-white font-semibold text-lg leading-tight mb-1">{STEPS[activeStep].label}</h3>
+              <p className="text-neutral-500 text-sm leading-relaxed">{STEPS[activeStep].desc}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* App mockup — scrollable on very small screens */}
+          <div className="overflow-x-auto -mx-4 px-4">
+            <div
+              className="rounded-2xl overflow-hidden border border-neutral-800"
+              style={{ minWidth: "400px", boxShadow: "0 24px 60px rgba(0,0,0,0.7), 0 8px 24px rgba(0,0,0,0.4)" }}
+            >
+              {/* Browser chrome */}
+              <div className="flex items-center gap-3 px-4 py-2.5 border-b border-neutral-800" style={{ backgroundColor: "#111" }}>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-neutral-700" />
+                </div>
+                <div className="flex-1 flex justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`mob-url-${activeStep}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-1.5 bg-neutral-800 rounded-md px-3 py-1 text-[10px] text-neutral-500"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full border border-neutral-600 shrink-0" />
+                      {STEPS[activeStep].urlPath}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+              {/* App navbar */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`mob-nav-${STEPS[activeStep].activePath}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <MockNavbar activePath={STEPS[activeStep].activePath} />
+                </motion.div>
+              </AnimatePresence>
+              {/* Screen body */}
+              <div style={{ height: "380px", overflow: "hidden" }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`mob-body-${activeStep}`}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="h-full"
+                  >
+                    <ActiveBody />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          {/* Step indicators */}
+          <div className="flex items-center justify-center gap-2 mt-5">
+            {STEPS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveStep(i)}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width: activeStep === i ? "20px" : "6px",
+                  height: "6px",
+                  backgroundColor: activeStep === i ? GOLD : "#2a2a2a",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop: scroll walkthrough */}
+        <div ref={scrollRef} className="relative hidden md:block" style={{ height: "300vh" }}>
+          <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+            <div className="max-w-6xl mx-auto w-full px-8">
             <div className="grid grid-cols-5 gap-16 items-center">
 
               {/* Left: steps */}
@@ -529,7 +644,8 @@ export function Hero() {
             </div>
           </div>
         </div>
-      </div>
+        </div>{/* end desktop scroll */}
+      </div>{/* end #product */}
     </section>
   );
 }
