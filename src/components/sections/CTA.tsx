@@ -8,11 +8,27 @@ const GOLD = "#d4af61";
 export function CTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,14 +84,16 @@ export function CTA() {
               />
               <button
                 onClick={handleSubmit}
-                className="px-6 py-3 rounded-xl text-sm font-medium shrink-0 transition-opacity hover:opacity-90"
+                disabled={loading}
+                className="px-6 py-3 rounded-xl text-sm font-medium shrink-0 transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ backgroundColor: GOLD, color: "#0a0a0a" }}
               >
-                Join waitlist
+                {loading ? "Joining..." : "Join waitlist"}
               </button>
             </>
           )}
         </motion.div>
+        {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
         <p className="text-neutral-800 text-xs mt-4">No spam. Unsubscribe anytime.</p>
       </div>
     </section>
